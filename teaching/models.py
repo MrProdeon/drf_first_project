@@ -6,7 +6,7 @@ from django.db.models import SET_NULL, CASCADE
 
 class Course(models.Model):
     title = models.CharField(max_length=100, verbose_name="Название")
-    preview = models.ImageField(verbose_name="Превью(картинка)")
+    preview = models.ImageField(verbose_name="Превью(картинка)", null=True, blank=True)
     description = models.TextField(verbose_name="Описание")
 
     def __str__(self):
