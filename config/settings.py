@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 import os
+
+from django.conf.global_settings import AUTH_USER_MODEL
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -41,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "users",
+    "teaching"
 
 ]
 
@@ -128,3 +132,5 @@ STATIC_URL = "static/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+AUTH_USER_MODEL = "users.CustomUser"
