@@ -60,6 +60,8 @@ class Payments(models.Model):
         CASH = "cash", "наличные"
         TRANSFER = "transfer", "перевод"
 
+    payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices)
+
     def clean(self):
         if not self.course and not self.lesson:
             raise ValidationError("Должен быть указан либо курс, либо урок")
@@ -69,5 +71,3 @@ class Payments(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
-    payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices)
