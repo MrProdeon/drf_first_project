@@ -13,6 +13,7 @@ psycopg2 = "^2.9.11"
 djangorestframework = "^3.17.1"
 python-dotenv = "^1.2.2"
 psycopg2-binary = "^2.9.11"
+django-filter = "^25.2"
 
 
 [build-system]
