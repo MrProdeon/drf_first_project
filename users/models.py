@@ -2,7 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import SET_NULL, CASCADE
-
+from datetime import date
 from teaching.models import Course, Lesson
 
 
@@ -51,7 +51,7 @@ class CustomUser(AbstractUser):
 
 class Payments(models.Model):
     user = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Пользователь")
-    payment_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+    payment_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
     course = models.ForeignKey(Course, on_delete=CASCADE, null=True, blank=True, verbose_name="Курс")
     lesson = models.ForeignKey(Lesson, on_delete=CASCADE, null=True, blank=True, verbose_name="Урок")
     payment_amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
