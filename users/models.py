@@ -1,6 +1,9 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import SET_NULL, CASCADE
+from datetime import date
+from teaching.models import Course, Lesson
 
 
 class CustomUserManager(BaseUserManager):
@@ -25,7 +28,7 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
-# Create your models here.
+
 class CustomUser(AbstractUser):
     username = None
 
@@ -45,3 +48,26 @@ class CustomUser(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+class Payments(models.Model):
+    user = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Пользователь")
+    payment_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
+    course = models.ForeignKey(Course, on_delete=CASCADE, null=True, blank=True, verbose_name="Курс")
+    lesson = models.ForeignKey(Lesson, on_delete=CASCADE, null=True, blank=True, verbose_name="Урок")
+    payment_amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
+
+    class PaymentMethod(models.TextChoices):
+        CASH = "cash", "наличные"
+        TRANSFER = "transfer", "перевод"
+
+    payment_method = models.CharField(max_length=10, choices=PaymentMethod.choices)
+
+    def clean(self):
+        if not self.course and not self.lesson:
+            raise ValidationError("Должен быть указан либо курс, либо урок")
+        if self.course and self.lesson:
+            raise ValidationError("Нельзя указать и курс, и урок одновременно")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
