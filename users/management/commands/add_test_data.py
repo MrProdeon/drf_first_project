@@ -65,14 +65,16 @@ class Command(BaseCommand):
                 "payment_amount": 1000,
                 "payment_method": "transfer",
                 "course": course,
-                "lesson": None
+                "lesson": None,
+                "payment_date" : "2025-03-26"
             },
             {
                 "user": user_objects["prodeon21@gmail.com"],
                 "payment_amount": 2000,
                 "payment_method": "cash",
                 "course": None,
-                "lesson": lesson
+                "lesson": lesson,
+                "payment_date" : "2024-03-26"
             },
             {
                 "user": user_objects["testuser@gmail.com"],
