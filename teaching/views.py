@@ -6,17 +6,24 @@ from teaching.models import Course, Lesson
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import generics
 
-from users.permissions import IsModerator, IsNotModerator
+from users.permissions import IsModerator, IsNotModerator, IsOwner
 
 
 # Create your views here.
 class CourseViewSet(ModelViewSet):
-    queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name="moderators").exists():
+            return Course.objects.all()
+        return Course.objects.filter(owner=user)
+
     def get_permissions(self):
-        if self.action in ["create", "destroy"]:
+        if self.action == "create":
             return [IsNotModerator(), IsAuthenticated()]
+        elif self.action in ["update", "partial_update", "destroy"]:
+            return [IsOwner(), IsAuthenticated()]
         else:
             return [IsAuthenticated()]
 
@@ -27,8 +34,13 @@ class CourseViewSet(ModelViewSet):
 
 
 class LessonListCreateApiView(ListCreateAPIView):
-    queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name="moderators").exists():
+            return Lesson.objects.all()
+        return Lesson.objects.filter(owner=user)
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -45,8 +57,14 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name="moderators").exists():
+            return Lesson.objects.all()
+        return Lesson.objects.filter(owner=user)
+
     def get_permissions(self):
-        if self.request.method == "DELETE":
-            return [IsNotModerator(), IsAuthenticated()]
+        if self.request.method in ["DELETE", "PUT", "PATCH"]:
+            return [IsOwner(), IsAuthenticated()]
         else:
             return [IsAuthenticated()]
