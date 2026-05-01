@@ -20,6 +20,11 @@ class CourseViewSet(ModelViewSet):
         else:
             return [IsAuthenticated()]
 
+    def perform_create(self, serializer):
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
 
 class LessonListCreateApiView(ListCreateAPIView):
     queryset = Lesson.objects.all()
@@ -30,6 +35,11 @@ class LessonListCreateApiView(ListCreateAPIView):
             return [IsNotModerator(), IsAuthenticated()]
         else:
             return [IsAuthenticated()]
+
+    def perform_create(self, serializer):
+        lesson = serializer.save()
+        lesson.owner = self.request.user
+        lesson.save()
 
 class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
