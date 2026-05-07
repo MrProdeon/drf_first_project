@@ -44,3 +44,4 @@ class Subscription(models.Model):
     class Meta:
         verbose_name = "Подиска"
         verbose_name_plural = "Подписки"
+        unique_together  = ["user", "course"]
