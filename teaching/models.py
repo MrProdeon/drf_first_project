@@ -4,7 +4,6 @@ from config import settings
 
 
 
-
 # Create your models here.
 
 class Course(models.Model):
@@ -34,3 +33,14 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+
+class Subscription(models.Model):
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=CASCADE, verbose_name="Пользователь")
+    course = models.ForeignKey(Course, on_delete=CASCADE, verbose_name="Курс")
+
+    def __str__(self):
+        return f"Подиска {self.user.email} на курс {self.course.title}"
+
+    class Meta:
+        verbose_name = "Подиска"
+        verbose_name_plural = "Подписки"
