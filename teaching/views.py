@@ -1,11 +1,15 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
-from teaching.models import Course, Lesson
+from teaching.models import Course, Lesson, Subscription
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import generics
+from rest_framework.views import APIView
 
+from users.models import CustomUser
 from users.permissions import IsModerator, IsNotModerator, IsOwner
 
 
@@ -68,3 +72,24 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
             return [IsOwner(), IsAuthenticated()]
         else:
             return [IsAuthenticated()]
+
+class SubscriptionsAPIView(APIView):
+    def post(self, *args, **kwargs):
+
+        user = self.request.user
+
+        course_id = self.request.data.get("course")
+        course_item = get_object_or_404(Course, id=course_id)
+
+        subs_item = Subscription.objects.filter(course=course_item, user=user)
+
+        if subs_item.exists():
+            subs_item.delete()
+            message = f"Подписка пользователя {user.email} на курс {course_item.title} удалена"
+        else:
+            Subscription.objects.create(course=course_item, user=user)
+            message = f"Подписка пользователя {user.email} на курс {course_item.title} добавлена"
+
+        return Response({"message" : message}, status=status.HTTP_201_CREATED)
+
+
