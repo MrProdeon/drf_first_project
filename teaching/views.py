@@ -8,6 +8,7 @@ from teaching.models import Course, Lesson, Subscription
 from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
+from teaching.paginators import ProjectPagination
 
 from users.models import CustomUser
 from users.permissions import IsModerator, IsNotModerator, IsOwner
@@ -16,6 +17,7 @@ from users.permissions import IsModerator, IsNotModerator, IsOwner
 # Create your views here.
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
+    pagination_class = ProjectPagination
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -44,6 +46,7 @@ class CourseViewSet(ModelViewSet):
 
 class LessonListCreateApiView(ListCreateAPIView):
     serializer_class = LessonSerializer
+    pagination_class = ProjectPagination
 
     def get_queryset(self):
         user = self.request.user
