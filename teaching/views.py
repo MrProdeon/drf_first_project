@@ -17,6 +17,11 @@ from users.permissions import IsModerator, IsNotModerator, IsOwner
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
     def get_queryset(self):
         user = self.request.user
         if user.groups.filter(name="moderators").exists():
