@@ -148,3 +148,5 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "users.CustomUser"
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
