@@ -26,7 +26,9 @@ class CourseViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.groups.filter(name="moderators").exists():
+        if user.is_anonymous:
+            return Course.objects.none()
+        elif user.groups.filter(name="moderators").exists():
             return Course.objects.all()
         return Course.objects.filter(owner=user)
 
@@ -71,7 +73,9 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if user.groups.filter(name="moderators").exists():
+        if user.is_anonymous:
+            return Lesson.objects.none()
+        elif user.groups.filter(name="moderators").exists():
             return Lesson.objects.all()
         return Lesson.objects.filter(owner=user)
 
