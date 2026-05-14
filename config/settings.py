@@ -150,3 +150,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 AUTH_USER_MODEL = "users.CustomUser"
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+
+SWAGGER_SETTINGS = {
+    'DEFAULT_MODEL_RENDERING': 'example',
+    'USE_SESSION_AUTH': False,
+    'JSON_EDITOR': True,
+    'DEFAULT_INFO': 'yourapp.urls.swagger_info',
+}
