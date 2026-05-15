@@ -16,6 +16,7 @@ from users.permissions import IsModerator, IsNotModerator, IsOwner
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from utils.common_errors import common_errors
+from utils.docs_examples import example_course_dict, example_lesson_dict
 
 
 # Create your views here.
@@ -49,6 +50,101 @@ class CourseViewSet(ModelViewSet):
         course.owner = self.request.user
         course.save()
 
+    @swagger_auto_schema(
+        operation_description="Получить список курсов (с учетом прав доступа)",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description='Успешный ответ со списком курсов',
+                schema=LessonSerializer,
+                examples={
+                    'application/json': example_course_dict
+                }
+            ),
+            **common_errors
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Получить курс",
+        responses={
+            status.HTTP_200_OK: openapi.Response(
+                description='Курс получен',
+                examples={
+                    'application/json': example_course_dict
+                }
+            ),
+            **common_errors})
+    def retrieve(self, request, *args, **kwargs):
+        super().retrieve(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Создать новый курс",
+        request_body=CourseSerializer,
+        responses={
+            status.HTTP_201_CREATED: openapi.Response(
+                description='Курс успешно создан',
+                examples={
+                    'application/json': example_course_dict
+                }
+            ),
+            status.HTTP_400_BAD_REQUEST: openapi.Response(
+                description="Неверно составлен запрос",
+                examples={
+                    "application/json": {
+
+                        "title": [
+                            "This field is required."
+                        ],
+                        "description": [
+                            "This field is required."
+                        ]
+
+                    }
+                }
+            ),
+            **common_errors
+        })
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Изменить курс",
+        responses={
+            status.HTTP_201_CREATED: openapi.Response(
+                description='Курс изменен',
+                examples={
+                    'application/json': example_course_dict
+                }
+            ),
+            **common_errors})
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Изменить курс",
+        responses={
+            status.HTTP_201_CREATED: openapi.Response(
+                description='Курс изменен',
+                examples={
+                    'application/json': example_course_dict
+                }
+            ),
+            **common_errors})
+    def partial_update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Удалить курс",
+        responses={
+            status.HTTP_204_NO_CONTENT: openapi.Response(
+                description='Курс удален',
+            ),
+            **common_errors})
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+
 
 class LessonListCreateApiView(ListCreateAPIView):
     serializer_class = LessonSerializer
@@ -78,19 +174,7 @@ class LessonListCreateApiView(ListCreateAPIView):
                 description='Успешный ответ со списком уроков',
                 schema=LessonSerializer,
                 examples={
-                    'application/json': {
-                        'count': 10,
-                        'next': 'http://...',
-                        'previous': None,
-                        'results': [
-                            {
-                                'id': 1,
-                                'title': 'Введение в Python',
-                                'owner': 5,
-                                'created_at': '2024-01-01T12:00:00Z'
-                            }
-                        ]
-                    }
+                    'application/json': example_lesson_dict
                 }
             ),
             **common_errors
@@ -107,12 +191,7 @@ class LessonListCreateApiView(ListCreateAPIView):
             status.HTTP_201_CREATED: openapi.Response(
                 description='Урок успешно создан',
                 examples={
-                    'application/json': {
-                        'id': 1,
-                        'title': 'Новый урок',
-                        'owner': 5,
-                        'created_at': '2024-01-01T12:00:00Z'
-                    }
+                    'application/json': example_lesson_dict
                 }
             ),
             status.HTTP_400_BAD_REQUEST: openapi.Response(
@@ -163,18 +242,10 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
             status.HTTP_200_OK: openapi.Response(
                 description='Урок получен',
                 examples={
-                    'application/json': {
-                        "id": 0,
-                        "video_url": "string",
-                        "title": "string",
-                        "preview": "string",
-                        "description": "string",
-                        "course": 0,
-                        "owner": 0
-                    }
+                    'application/json': example_lesson_dict
                 }
             ),
-        **common_errors})
+            **common_errors})
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -184,15 +255,7 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
             status.HTTP_201_CREATED: openapi.Response(
                 description='Урок изменен',
                 examples={
-                    'application/json': {
-                        "id": 0,
-                        "video_url": "string",
-                        "title": "string",
-                        "preview": "string",
-                        "description": "string",
-                        "course": 0,
-                        "owner": 0
-                    }
+                    'application/json': example_lesson_dict
                 }
             ),
             **common_errors})
@@ -205,15 +268,7 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
             status.HTTP_201_CREATED: openapi.Response(
                 description='Урок изменен',
                 examples={
-                    'application/json': {
-                        "id": 0,
-                        "video_url": "string",
-                        "title": "string",
-                        "preview": "string",
-                        "description": "string",
-                        "course": 0,
-                        "owner": 0
-                    }
+                    'application/json': example_lesson_dict
                 }
             ),
             **common_errors})
@@ -232,6 +287,20 @@ class LessonRetriveUpdateDestroyApiView(RetrieveUpdateDestroyAPIView):
 
 
 class SubscriptionsAPIView(APIView):
+
+    @swagger_auto_schema(
+        operation_description="Создать\удалить подписку на курс. Если подписка есть - удалим её, а если её нет - добавим.",
+        responses={
+            status.HTTP_201_CREATED: openapi.Response(
+                description="Успешное изменение статуса подписки",
+                examples={
+                    "application/json":
+                        {"message": "Подписка пользователя 3 на курс Основы Python удалена"}
+                }
+            ),
+            **common_errors
+        }
+    )
     def post(self, *args, **kwargs):
 
         user = self.request.user
