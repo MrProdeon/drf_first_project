@@ -56,6 +56,9 @@ class Payments(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=CASCADE, null=True, blank=True, verbose_name="Урок")
     payment_amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
 
+    session_id = models.CharField(max_length=400, verbose_name="id сессии", blank=True, null=True)
+    payment_link = models.TextField(verbose_name="Ссылка на оплату", blank=True, null=True)
+
     class PaymentMethod(models.TextChoices):
         CASH = "cash", "наличные"
         TRANSFER = "transfer", "перевод"
