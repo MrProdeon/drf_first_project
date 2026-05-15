@@ -26,10 +26,16 @@ schema_view = get_schema_view(
     openapi.Info(
         title="API Documentation",
         default_version='v1',
-        description="Your API description",
-        terms_of_service="https://www.example.com/policies/terms/",
-        contact=openapi.Contact(email="contact@example.com"),
-        license=openapi.License(name="BSD License"),
+        description="""
+        
+        Для работы с API необходимо выполнить следующие шаги:
+        - Пройти регистрацию с помощью метода POST /users/register
+        - Получить токен с помощью метода POST /users/login/
+        - Добавить ваш токен в заголовок Authorization со значение Bearer your_acces_token
+        - При истечении токена используется метод POST /users/token/refresh/
+        
+        Обратите внимание - все методы, кроме /users/register/ и /users/login/ требуют авторизации по токену
+        """,
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
