@@ -1,5 +1,8 @@
 import stripe
+from django.core.mail import send_mail
+
 from config import settings
+from teaching.models import Course, Subscription
 
 stripe.api_key = settings.STRIPE_API_KEY
 
@@ -34,3 +37,6 @@ def create_stripe_session(price_id):
         mode="payment",
     )
     return session.id, session.url
+
+def get_recipient_list(course_id : int):
+    return [sub.user.email for sub in Subscription.objects.filter(course=course_id)]
