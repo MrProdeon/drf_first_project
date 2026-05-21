@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "teaching",
     "django_filters",
     "rest_framework_simplejwt",
-    'drf_yasg'
+    "drf_yasg",
+    "django_celery_beat"
 
 ]
 
@@ -157,3 +158,25 @@ SWAGGER_SETTINGS = {
     'JSON_EDITOR': True,
     'DEFAULT_INFO': 'yourapp.urls.swagger_info',
 }
+
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = os.getenv("REDIS_FOR_CELERY")
+CELERY_RESULT_BACKEND = os.getenv("REDIS_FOR_CELERY")
+
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'users.tasks.block_inactive_users',
+        'schedule': timedelta(days=1),
+    },
+}
+
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False").lower() == "true"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
