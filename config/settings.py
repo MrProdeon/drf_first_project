@@ -167,8 +167,8 @@ CELERY_RESULT_BACKEND = os.getenv("REDIS_FOR_CELERY")
 
 CELERY_BEAT_SCHEDULE = {
     'task-name': {
-        'task': 'myapp.tasks.my_task',  # Путь к задаче
-        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+        'task': 'users.tasks.block_inactive_users',
+        'schedule': timedelta(days=1),
     },
 }
 
