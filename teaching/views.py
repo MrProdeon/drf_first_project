@@ -9,6 +9,8 @@ from teaching.serializers import CourseSerializer, LessonSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
 from teaching.paginators import ProjectPagination
+from teaching.services import get_recipient_list
+from teaching.tasks import send_information_about_update
 
 from users.models import CustomUser
 from users.permissions import IsModerator, IsNotModerator, IsOwner
@@ -64,7 +66,7 @@ class CourseViewSet(ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
-        super().list(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Получить курс",
@@ -77,7 +79,7 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def retrieve(self, request, *args, **kwargs):
-        super().retrieve(request, *args, **kwargs)
+        return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Создать новый курс",
@@ -107,7 +109,7 @@ class CourseViewSet(ModelViewSet):
             **common_errors
         })
     def create(self, request, *args, **kwargs):
-        super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Изменить курс",
@@ -120,7 +122,11 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        course_id = kwargs.get("pk")
+        recipient_list = get_recipient_list(course_id)
+        send_information_about_update.delay(course_id, recipient_list)
+
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Изменить курс",
@@ -133,7 +139,11 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def partial_update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        course_id = kwargs.get("pk")
+        recipient_list = get_recipient_list(course_id)
+        send_information_about_update.delay(course_id, recipient_list)
+
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Удалить курс",
@@ -143,7 +153,7 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
 
 class LessonListCreateApiView(ListCreateAPIView):
