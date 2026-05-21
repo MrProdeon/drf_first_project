@@ -40,7 +40,7 @@ class UserViewSet(ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
-        super().list(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Получить пользователя",
@@ -53,7 +53,7 @@ class UserViewSet(ModelViewSet):
             ),
             **common_errors})
     def retrieve(self, request, *args, **kwargs):
-        super().retrieve(request, *args, **kwargs)
+        return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Создать нового пользователя",
@@ -83,7 +83,7 @@ class UserViewSet(ModelViewSet):
             **common_errors
         })
     def create(self, request, *args, **kwargs):
-        super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Изменить пользователя",
@@ -96,7 +96,7 @@ class UserViewSet(ModelViewSet):
             ),
             **common_errors})
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Частично изменить пользователя",
@@ -109,7 +109,7 @@ class UserViewSet(ModelViewSet):
             ),
             **common_errors})
     def partial_update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Удалить пользователя",
@@ -119,7 +119,7 @@ class UserViewSet(ModelViewSet):
             ),
             **common_errors})
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -139,7 +139,7 @@ class UserCreateAPIView(CreateAPIView):
             ),
             **common_errors})
     def post(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 class PaymentViewSet(ModelViewSet):
@@ -173,7 +173,7 @@ class PaymentViewSet(ModelViewSet):
         }
     )
     def list(self, request, *args, **kwargs):
-        super().list(request, *args, **kwargs)
+        return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Получить платёж",
@@ -186,7 +186,7 @@ class PaymentViewSet(ModelViewSet):
             ),
             **common_errors})
     def retrieve(self, request, *args, **kwargs):
-        super().retrieve(request, *args, **kwargs)
+        return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Создать новый платёж",
@@ -216,7 +216,7 @@ class PaymentViewSet(ModelViewSet):
             **common_errors
         })
     def create(self, request, *args, **kwargs):
-        super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Изменить платёж",
@@ -229,7 +229,7 @@ class PaymentViewSet(ModelViewSet):
             ),
             **common_errors})
     def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Частично изменить платёж",
@@ -242,7 +242,7 @@ class PaymentViewSet(ModelViewSet):
             ),
             **common_errors})
     def partial_update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
         operation_description="Удалить платёж",
@@ -252,7 +252,7 @@ class PaymentViewSet(ModelViewSet):
             ),
             **common_errors})
     def destroy(self, request, *args, **kwargs):
-        super().destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs)
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
