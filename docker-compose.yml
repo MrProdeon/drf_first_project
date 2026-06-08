@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+
+
+  drf_project:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - ./.env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+        db:
+          condition: service_healthy
+        redis:
+          condition: service_started
+
+
+  db:
+    image: postgres
+    env_file:
+      - ./.env
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+  redis:
+    image: redis
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    build: .
+    command:
+      - celery -A config worker -l INFO
+    env_file:
+      - ./.env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+      - drf_project
+
+  celery_beat:
+    build: .
+    command: celery -A config beat -l INFO
+    env_file:
+      - ./.env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+      - celery
+
+
+volumes:
+  postgres_data:
+  redis_data:
