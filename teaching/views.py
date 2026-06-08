@@ -122,11 +122,14 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def update(self, request, *args, **kwargs):
-        course_id = kwargs.get("pk")
-        recipient_list = get_recipient_list(course_id)
-        send_information_about_update.delay(course_id, recipient_list)
+        response = super().update(request, *args, **kwargs)
 
-        return super().update(request, *args, **kwargs)
+        if response.status_code == 201 or response.status_code == 200:
+            course_id = kwargs.get("pk")
+            recipient_list = get_recipient_list(course_id)
+            send_information_about_update.delay(course_id, recipient_list)
+
+        return response
 
     @swagger_auto_schema(
         operation_description="Изменить курс",
@@ -139,11 +142,14 @@ class CourseViewSet(ModelViewSet):
             ),
             **common_errors})
     def partial_update(self, request, *args, **kwargs):
-        course_id = kwargs.get("pk")
-        recipient_list = get_recipient_list(course_id)
-        send_information_about_update.delay(course_id, recipient_list)
+        response = super().update(request, *args, **kwargs)
 
-        return super().update(request, *args, **kwargs)
+        if response.status_code == 201 or response.status_code == 200:
+            course_id = kwargs.get("pk")
+            recipient_list = get_recipient_list(course_id)
+            send_information_about_update.delay(course_id, recipient_list)
+
+        return response
 
     @swagger_auto_schema(
         operation_description="Удалить курс",
