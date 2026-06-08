@@ -125,6 +125,7 @@ class UserViewSet(ModelViewSet):
 class UserCreateAPIView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Создать пользователя",
