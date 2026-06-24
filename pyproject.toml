@@ -25,6 +25,7 @@ django-celery-beat = "^2.9.0"
 redis = "^7.4.0"
 eventlet = "^0.41.0"
 gevent = "^26.5.0"
+gunicorn = "^26.0.0"
 
 
 [build-system]
