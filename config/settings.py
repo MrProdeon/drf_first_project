@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["158.160.4.200", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'drf_project', 'drf_project:8000', '158.160.4.200', 'compute-vm-2-2-10-hdd-1781842498339']
 
 # Application definition
 
