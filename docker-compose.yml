@@ -5,7 +5,7 @@ services:
 
   drf_project:
     build: .
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"
     env_file:
       - ./.env
     environment:
@@ -30,7 +30,7 @@ services:
     expose:
       - "5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
       interval: 30s
@@ -47,8 +47,7 @@ services:
 
   celery:
     build: .
-    command:
-      - celery -A config worker -l INFO
+    command: celery -A config worker -l INFO
     env_file:
       - ./.env
     environment:
@@ -80,7 +79,15 @@ services:
       - redis
       - celery
 
+  nginx:
+    build: ./nginx/
+    ports:
+      - "80:80"
+    depends_on:
+      - drf_project
+
+
+
 
 volumes:
-  postgres_data:
   redis_data:
