@@ -74,3 +74,19 @@ jobs:
           EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
           DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
         run: python manage.py test
+
+  build:
+    runs-on: ununtu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Log in in docker hub
+        run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }} .
+
+      - name: Push Docker image in Docker hub
+        run: docker push ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }}
