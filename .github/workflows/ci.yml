@@ -76,6 +76,7 @@ jobs:
         run: python manage.py test
 
   build:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -91,6 +92,7 @@ jobs:
       - name: Push Docker image in Docker hub
         run: docker push ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }}
   deploy:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
