@@ -115,22 +115,19 @@ jobs:
             git clone https://github.com/MrProdeon/drf_first_project.git
             cd drf_first_project
 
-            # Создаем .env файл
+            # Создание .env
             cat > .env << 'EOF'
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             DEBUG=False
             ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
-
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             DB_HOST=db
             DB_PORT=5432
-
             POSTGRES_DB=${{ secrets.DB_NAME }}
             POSTGRES_USER=${{ secrets.DB_USER }}
             POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }}
-
             EMAIL_PORT=${{ secrets.EMAIL_PORT }}
             EMAIL_HOST=${{ secrets.EMAIL_HOST }}
             EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
@@ -139,24 +136,20 @@ jobs:
             EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}
             EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}
             DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }}
-
             REDIS_HOST=redis
             REDIS_PORT=6379
             EOF
 
-            # Останавливаем старые контейнеры и удаляем тома
+            # Полная очистка перед запуском
             docker compose down -v || true
-
-            # Удаляем папку с данными PostgreSQL (решает проблему конфликта версий)
             sudo rm -rf postgres_data
+            docker volume rm drf_first_project_postgres_data 2>/dev/null || true
+            docker volume rm drf_first_project_redis_data 2>/dev/null || true
 
-            # Запускаем контейнеры
+            # Запуск контейнеров
             docker compose pull
             docker compose up -d
 
-            # Проверяем статус
-            echo "=== Статус контейнеров ==="
+            # Проверка
             docker compose ps
-
-            echo "=== Логи базы данных ==="
             docker compose logs db --tail=20
