@@ -1,10 +1,8 @@
 version: "3.9"
 
 services:
-
-
   drf_project:
-    build: .
+    image: prodeon/myapp:latest
     command: sh -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"
     env_file:
       - ./.env
@@ -12,41 +10,40 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - REDIS_HOST=redis
-    volumes:
-      - .:/code
     ports:
       - "8000:8000"
     depends_on:
-        db:
-          condition: service_healthy
-        redis:
-          condition: service_started
-
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
 
   db:
-    image: postgres
+    image: postgres:15
     env_file:
       - ./.env
     expose:
       - "5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 30s
       timeout: 10s
       retries: 5
-
+    restart: unless-stopped
 
   redis:
-    image: redis
+    image: redis:alpine
     expose:
       - "6379"
     volumes:
       - redis_data:/data
+    restart: unless-stopped
 
   celery:
-    build: .
+    image: prodeon/myapp:latest
     command: celery -A config worker -l INFO
     env_file:
       - ./.env
@@ -55,15 +52,13 @@ services:
       - DB_PORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    volumes:
-      - .:/code
     depends_on:
       - db
       - redis
-      - drf_project
+    restart: unless-stopped
 
   celery_beat:
-    build: .
+    image: prodeon/myapp:latest
     command: celery -A config beat -l INFO
     env_file:
       - ./.env
@@ -72,12 +67,10 @@ services:
       - DB_PORT=5432
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    volumes:
-      - .:/code
     depends_on:
       - db
       - redis
-      - celery
+    restart: unless-stopped
 
   nginx:
     build: ./nginx/
@@ -85,9 +78,8 @@ services:
       - "80:80"
     depends_on:
       - drf_project
-
-
-
+    restart: unless-stopped
 
 volumes:
   redis_data:
+  postgres_data:
