@@ -114,6 +114,7 @@ jobs:
             sudo rm -rf drf_first_project
             git clone https://github.com/MrProdeon/drf_first_project.git
             cd drf_first_project
+            git checkout develop
 
             # Создание .env
             cat > .env << 'EOF'
