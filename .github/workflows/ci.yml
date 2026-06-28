@@ -92,7 +92,7 @@ jobs:
       - name: Push Docker image in Docker hub
         run: docker push ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }}
   deploy:
-    #needs: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -103,20 +103,25 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Установка docker compose
+            # Установка docker compose если нет
             if ! command -v docker compose &> /dev/null; then
               sudo apt update
               sudo apt install docker-compose-plugin -y
             fi
 
-            # Клонирование репозитория
+            # Переход в домашнюю папку
             cd /home/prodeon
-            sudo rm -rf drf_first_project
-            git clone https://github.com/MrProdeon/drf_first_project.git
-            cd drf_first_project
-            git checkout develop
 
-            # Создание .env
+            # Удаляем старую папку (если есть)
+            sudo rm -rf drf_first_project
+
+            # Клонируем ветку develop
+            git clone -b develop https://github.com/MrProdeon/drf_first_project.git
+
+            # Переходим в папку проекта
+            cd drf_first_project
+
+            # Создаем .env файл
             cat > .env << 'EOF'
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             DEBUG=False
@@ -141,16 +146,15 @@ jobs:
             REDIS_PORT=6379
             EOF
 
-            # Полная очистка перед запуском
+            # Очистка старых данных (чтобы не было проблем с PostgreSQL)
             docker compose down -v || true
             sudo rm -rf postgres_data
             docker volume rm drf_first_project_postgres_data 2>/dev/null || true
             docker volume rm drf_first_project_redis_data 2>/dev/null || true
 
-            # Запуск контейнеров
+            # Запускаем контейнеры
             docker compose pull
             docker compose up -d
 
-            # Проверка
+            # Проверяем статус
             docker compose ps
-            docker compose logs db --tail=20
