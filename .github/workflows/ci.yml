@@ -76,21 +76,22 @@ jobs:
         run: python manage.py test
 
   build:
-#    needs: test
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Log in in docker hub
+      - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_LOGIN }} --password-stdin
 
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }} .
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }} .
+          docker tag ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }} ${{ secrets.DOCKER_LOGIN }}/myapp:latest
+          docker push ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_LOGIN }}/myapp:latest
 
-      - name: Push Docker image in Docker hub
-        run: docker push ${{ secrets.DOCKER_LOGIN }}/myapp:${{ github.sha }}
   deploy:
     needs: build
     runs-on: ubuntu-latest
