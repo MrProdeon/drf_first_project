@@ -96,33 +96,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up SSH
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cat > /home/prodeon/.env << 'EOF'
+            
+            cd /home/prodeon
+            rm -rf drf_first_project || true
+            git clone https://github.com/MrProdeon/drf_first_project.git
+            cd drf_first_project
+
+            
+            cat > .env << 'EOF'
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             DEBUG=False
             ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
             DB_NAME=${{ secrets.DB_NAME }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
+            DB_HOST=db
+            DB_PORT=5432
             EMAIL_PORT=${{ secrets.EMAIL_PORT }}
             EMAIL_HOST=${{ secrets.EMAIL_HOST }}
             EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}
             EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
-            EMAIL_USE_TLS=${{ secrets.EMAIL_USE_TLS }}
-            EMAIL_USE_SSL=${{ secrets.EMAIL_USE_SSL }}
-            EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}
-            DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }}
             EOF
+
             
-            docker pull ${{ secrets.DOCKER_LOGIN }}/myapp:latest
-            docker stop myapp || true
-            docker rm myapp || true
-            docker run -d --name myapp -p 80:8000 --env-file /home/prodeon/.env ${{ secrets.DOCKER_LOGIN }}/myapp:latest 
+            docker-compose down || true
+            docker-compose pull
+            docker-compose up -d
