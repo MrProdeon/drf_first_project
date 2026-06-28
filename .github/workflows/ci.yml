@@ -104,10 +104,24 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             
+            if ! command -v docker-compose &> /dev/null; then
+              echo "Installing Docker Compose..."
+              sudo apt update
+              sudo apt install docker-compose-plugin -y
+            fi
+
+            
             cd /home/prodeon
-            rm -rf drf_first_project || true
-            git clone https://github.com/MrProdeon/drf_first_project.git
-            cd drf_first_project
+            if [ -d "drf_first_project" ]; then
+              echo "Updating existing project..."
+              cd drf_first_project
+              sudo rm -rf postgres_data 2>/dev/null || true
+              git pull origin develop
+            else
+              echo "Cloning project..."
+              git clone https://github.com/MrProdeon/drf_first_project.git
+              cd drf_first_project
+            fi
 
             
             cat > .env << 'EOF'
