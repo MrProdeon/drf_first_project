@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import SET_NULL, CASCADE
 from datetime import date
+
+from rest_framework.exceptions import ValidationError
+
 from teaching.models import Course, Lesson
 
 
@@ -32,7 +35,9 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     username = None
 
-    phone_number = models.CharField(max_length=15, verbose_name="Номер телефона", blank=True, null=True)
+    phone_number = models.CharField(
+        max_length=15, verbose_name="Номер телефона", blank=True, null=True
+    )
     city = models.CharField(max_length=100, verbose_name="Город", blank=True, null=True)
     avatar = models.ImageField(blank=True, null=True, verbose_name="Аватар")
 
@@ -49,15 +54,26 @@ class CustomUser(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
+
 class Payments(models.Model):
-    user = models.ForeignKey(to=CustomUser, on_delete=CASCADE, verbose_name="Пользователь")
+    user = models.ForeignKey(
+        to=CustomUser, on_delete=CASCADE, verbose_name="Пользователь"
+    )
     payment_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
-    course = models.ForeignKey(Course, on_delete=CASCADE, null=True, blank=True, verbose_name="Курс")
-    lesson = models.ForeignKey(Lesson, on_delete=CASCADE, null=True, blank=True, verbose_name="Урок")
+    course = models.ForeignKey(
+        Course, on_delete=CASCADE, null=True, blank=True, verbose_name="Курс"
+    )
+    lesson = models.ForeignKey(
+        Lesson, on_delete=CASCADE, null=True, blank=True, verbose_name="Урок"
+    )
     payment_amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
 
-    session_id = models.CharField(max_length=400, verbose_name="id сессии", blank=True, null=True)
-    payment_link = models.TextField(verbose_name="Ссылка на оплату", blank=True, null=True)
+    session_id = models.CharField(
+        max_length=400, verbose_name="id сессии", blank=True, null=True
+    )
+    payment_link = models.TextField(
+        verbose_name="Ссылка на оплату", blank=True, null=True
+    )
 
     class PaymentMethod(models.TextChoices):
         CASH = "cash", "наличные"

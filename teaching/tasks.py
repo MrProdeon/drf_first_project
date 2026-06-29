@@ -12,10 +12,9 @@ def send_information_about_update(course_id: int, recipient_list: list[str]) -> 
     send_information = {
         "subject": f"Курс {course.title} получил обновление!",
         "message": f"Вы подписаны на обновление курса {course.title}. Рады сообщить, что курс обновлен."
-                   f" Узнайте что нового в числе первых! ",
+        f" Узнайте что нового в числе первых! ",
         "from_email": settings.DEFAULT_FROM_EMAIL,
-        "recipient_list": recipient_list
-
+        "recipient_list": recipient_list,
     }
 
     send_mail(**send_information)
