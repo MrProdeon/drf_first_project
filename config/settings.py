@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+
 import os
 from datetime import timedelta
 
@@ -30,7 +31,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -47,25 +48,22 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework_simplejwt",
     "drf_yasg",
-    "django_celery_beat"
-
+    "django_celery_beat",
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 MIDDLEWARE = [
@@ -153,10 +151,10 @@ AUTH_USER_MODEL = "users.CustomUser"
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 SWAGGER_SETTINGS = {
-    'DEFAULT_MODEL_RENDERING': 'example',
-    'USE_SESSION_AUTH': False,
-    'JSON_EDITOR': True,
-    'DEFAULT_INFO': 'yourapp.urls.swagger_info',
+    "DEFAULT_MODEL_RENDERING": "example",
+    "USE_SESSION_AUTH": False,
+    "JSON_EDITOR": True,
+    "DEFAULT_INFO": "yourapp.urls.swagger_info",
 }
 
 CELERY_TIMEZONE = TIME_ZONE
@@ -166,9 +164,9 @@ CELERY_BROKER_URL = os.getenv("REDIS_FOR_CELERY")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_FOR_CELERY")
 
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'users.tasks.block_inactive_users',
-        'schedule': timedelta(days=1),
+    "task-name": {
+        "task": "users.tasks.block_inactive_users",
+        "schedule": timedelta(days=1),
     },
 }
 

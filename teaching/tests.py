@@ -11,17 +11,20 @@ from django.urls import reverse
 class LessonTestCase(APITestCase):
 
     def setUp(self):
-        self.user = CustomUser.objects.create(email="test123@mail.ru", password="test123")
+        self.user = CustomUser.objects.create(
+            email="test123@mail.ru", password="test123"
+        )
         self.client.force_authenticate(user=self.user)
         self.course = Course.objects.create(
-            title="Test Course",
-            description="Course Description",
-            owner=self.user
+            title="Test Course", description="Course Description", owner=self.user
         )
-        self.lesson = Lesson.objects.create(title="test", description="test",
-                                            video_url="https://www.youtube.com/watch?v=jfKfPfyJRdk",
-                                            course=self.course,
-                                            owner=self.user)
+        self.lesson = Lesson.objects.create(
+            title="test",
+            description="test",
+            video_url="https://www.youtube.com/watch?v=jfKfPfyJRdk",
+            course=self.course,
+            owner=self.user,
+        )
 
     def test_get(self):
         url = reverse("teaching:lessons-list")
@@ -43,7 +46,7 @@ class LessonTestCase(APITestCase):
             "title": "New Lesson",
             "description": "New Description",
             "video_url": "https://www.youtube.com/watch?v=new",
-            "course": self.course.id
+            "course": self.course.id,
         }
         response = self.client.post(url, lesson_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -53,7 +56,7 @@ class LessonTestCase(APITestCase):
             "title": "New Lesson",
             "description": "New Description",
             "video_url": "https://error.com",
-            "course": self.course.id
+            "course": self.course.id,
         }
         second_response = self.client.post(url, second_lesson_data)
         self.assertEqual(second_response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -77,11 +80,9 @@ class SubscriptionTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
 
         self.course = Course.objects.create(
-            title="Test Course",
-            description="Course Description",
-            owner=self.user
+            title="Test Course", description="Course Description", owner=self.user
         )
-        #self.subscription = Subscription.objects.create(user=self.user, course=self.course)
+        # self.subscription = Subscription.objects.create(user=self.user, course=self.course)
 
     def test_get_subscription(self):
         url = reverse("teaching:subscriptions")
@@ -93,14 +94,18 @@ class SubscriptionTestCase(APITestCase):
         sub_items = {"course": self.course.id}
         response = self.client.post(url, sub_items)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json()["message"],
-                         f"Подписка пользователя {self.user.email} на курс {self.course.title} добавлена")
+        self.assertEqual(
+            response.json()["message"],
+            f"Подписка пользователя {self.user.email} на курс {self.course.title} добавлена",
+        )
 
     def test_post_subscription_delete(self):
         url = reverse("teaching:subscriptions")
         Subscription.objects.create(course=self.course, user=self.user)
-        sub_data = {"course" : self.course.id}
+        sub_data = {"course": self.course.id}
         response = self.client.post(url, sub_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json()["message"],
-                         f"Подписка пользователя {self.user.email} на курс {self.course.title} удалена")
+        self.assertEqual(
+            response.json()["message"],
+            f"Подписка пользователя {self.user.email} на курс {self.course.title} удалена",
+        )
